@@ -17,6 +17,19 @@
 		text-decoration: none;
 	}
 </style>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$(".pages").on("click",function(){
+			.post(
+				$(this).attr('href'),
+				function(){
+					alert('Yes!');
+				}
+				);
+			return false;
+		});
+	})
+</script>
 </head>
 <body>
 	<form action="/leads/filter" method="post">
@@ -27,7 +40,7 @@
 	</form>
 	<ul id='pages'>
 		<?php for($i=1;$i<=$total_pages;$i++):?>
-		<li><a id="page_<?= $i?>" href="/leads/display_page/<?= $i?>/<?= $total_pages?>" page="<?= $total_pages?>"><?= $i?></a></li>
+		<li><a rid="<?= $i?>" class="pages" href="/leads/display_page/<?= $i?>" page="<?= $total_pages?>"><?= $i?></a></li>
 		<?php endfor;?>
 	</ul>
 	<table>
