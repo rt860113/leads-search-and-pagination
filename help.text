@@ -1,0 +1,19 @@
+1. how to join mutiple tables in ORM.
+Here's an example:
+
+$u = new User();
+
+// Get all users that are associated with a :
+// -> Project that have one or more ...
+//   -> Tasks whose ...
+//     -> Status is labeled 'completed'
+$u->where_related('project/task/status', 'label', 'completed')->get();
+The generated query for this simple request is surprisingly complex!
+
+SELECT `users`.*
+FROM `users`
+LEFT OUTER JOIN `projects_users` as `projects_users` ON `projects_users`.`user_id` = `users`.`id`
+LEFT OUTER JOIN `projects` as `projects` ON `projects_users`.`project_id` = `project`.`id`
+LEFT OUTER JOIN `tasks` as `project_tasks` ON `project_tasks`.`project_id` = `projects`.`id`
+LEFT OUTER JOIN `statuses` as `project_task_statuses` ON `project_tasks`.`status_id` = `project_task_statuses`.`id`
+WHERE `project_task_statuses`.`label` = 'completed'

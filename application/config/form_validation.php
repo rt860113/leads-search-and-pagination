@@ -1,8 +1,8 @@
 <?php
 $config=array(
-		"note"=>array(
-					array("field"=>"description",
-							"label"=>"Description",
+		"leads"=>array(
+					array("field"=>"name",
+							"label"=>"Name",
 							"rules"=>"trim|required"
 				)
 				
