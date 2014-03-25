@@ -5,19 +5,17 @@ class Leads extends CI_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		$this->output->enable_profiler(TRUE);
+		// $this->output->enable_profiler(TRUE);
 	}
 	public function index()
 	{
+		$this->session->sess_destroy();
 		$lead=new lead();
 		$count=$lead->count();
-		// var_dump($count);
 		$total_pages=ceil($count/15);
-		// var_dump($total_pages);
 		$lead1=new lead();
 		$lead1->limit(15,0);
 		$result=$lead1->get()->all_to_array();
-		// var_dump($result);
 		$this->load->view("lead_view",array("result"=>$result,"total_pages"=>$total_pages));
 	}
 	public function load_page($array)
@@ -48,8 +46,8 @@ class Leads extends CI_Controller
 			"end_date"=>$this->session->userdata('end_date')
 			);
 		$array1=$this->get_filter($array);
-		// var_dump($array1);
-		$this->load_page($array1);
+		echo json_encode($array1);
+		// $this->load_page($array1);
 	}
 	public function filter()
 	{
@@ -63,16 +61,15 @@ class Leads extends CI_Controller
 			"end_date"=>$this->session->userdata('end_date')
 			);
 		$array1=$this->get_filter($array);
-		$this->load_page($array1);
+		echo json_encode($array1);
+		// $this->load_page($array1);
 	}
 	public function get_filter($array)
 	{
-		var_dump($array);
 		$lead=new lead();
 		$lead1=new lead();
 		if(!empty($array['start_date'])&&!empty($array['end_date']))
 		{
-			echo "date";
 			$start_date=date("Y-m-d",strtotime($array['start_date']));
 			$end_date=date("Y-m-d",strtotime($array['end_date']));
 			$where="date(registered_datetime) between '".$start_date."' AND '".$end_date."'";
@@ -80,7 +77,7 @@ class Leads extends CI_Controller
 			$lead1->where($where);
 			if(strlen(trim($array['name']))>1)
 			{	
-				$array2=explode(" ", trim($array['name']));
+				$array2=explode(" ", ucwords(strtolower(trim($array['name']))));
 				$first_name=$array2[0];
 				$last_name=$array2[1];
 				$lead->where("first_name",$first_name);
@@ -94,11 +91,9 @@ class Leads extends CI_Controller
 			$result=$lead->get()->all_to_array();
 		}elseif (strlen(trim($array['name']))>1) 
 		{
-			echo "name";
-			$array2=explode(" ", trim($array['name']));
+			$array2=explode(" ", ucwords(strtolower(trim($array['name']))));
 			$first_name=$array2[0];
 			$last_name=$array2[1];
-			// var_dump($array2);
 			$lead->where("first_name",$first_name);
 			$lead->where("last_name",$last_name);
 			$lead1->where("first_name",$first_name);
@@ -109,7 +104,6 @@ class Leads extends CI_Controller
 			$result=$lead1->get()->all_to_array();
 		}else
 		{
-			// echo "nothing";
 			$lead->limit(15,($array['page']-1)*15);
 			$result=$lead->get()->all_to_array();
 			$count=$lead->count();
@@ -118,7 +112,6 @@ class Leads extends CI_Controller
 		$array1=array(
 				"total_pages"=>$total_pages,
 				"result"=>$result);
-		// var_dump($array1);
 		return $array1;
 	}
 	
